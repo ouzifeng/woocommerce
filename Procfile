@@ -1,2 +1,2 @@
-web: python manage.py runserver
+web: gunicorn woocommerce-app.wsgi
 worker: python worker_script.py
