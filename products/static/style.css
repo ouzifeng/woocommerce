@@ -1,0 +1,48 @@
+body {
+    background-color: #f2f3f8;
+    font-family: 'Poppins', sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+}
+
+table {
+    background-color: #fff;
+    border-radius: 8px;
+}
+
+thead th {
+    background-color: #f0f3ff;
+    border-top-width: 0;
+    border-bottom: 2px solid #e1e5ec;
+}
+
+tbody td {
+    border-top: 1px solid #e1e5ec;
+}
+
+.table tbody tr {
+    height: 30px;  /* or any other height you prefer */
+}
+
+.table tbody td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Increase the width of the modal */
+.wide-modal .modal-dialog {
+    max-width: 75%; /* Set modal width to 75% of the screen */
+}
+
+/* Ensure the modal body content can scroll if it overflows the height */
+.wide-modal .modal-body {
+    max-height: calc(100vh - 212px);  /* view height minus modal header/footer */
+    overflow-y: auto;  /* Enable vertical scrolling */
+}
+
+.button-group .btn {
+    margin-right: 10px;
+}
