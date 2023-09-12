@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-c57j6+fwu=*w*u2guf-(ap0yje!7df@_@$_n6ube*k8@4gvkdv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["woocommerce-app-83aad42999d1.herokuapp.com"]
 
 
 # Application definition
