@@ -4,12 +4,16 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 95%;
 }
 
 table {
     background-color: #fff;
     border-radius: 8px;
+    font-size: 15px;
+
 }
 
 thead th {
@@ -23,7 +27,7 @@ tbody td {
 }
 
 .table tbody tr {
-    height: 30px;  /* or any other height you prefer */
+    height: 20px;  /* or any other height you prefer */
 }
 
 .table tbody td {
@@ -32,17 +36,16 @@ tbody td {
     white-space: nowrap;
 }
 
-/* Increase the width of the modal */
-.wide-modal .modal-dialog {
-    max-width: 75%; /* Set modal width to 75% of the screen */
-}
-
-/* Ensure the modal body content can scroll if it overflows the height */
-.wide-modal .modal-body {
-    max-height: calc(100vh - 212px);  /* view height minus modal header/footer */
-    overflow-y: auto;  /* Enable vertical scrolling */
-}
-
 .button-group .btn {
     margin-right: 10px;
+}
+
+
+.wide-modal .modal-dialog {
+    max-width: 90%;
+    width: 90%;
+}
+
+.modal-content {
+    white-space: pre-wrap;
 }

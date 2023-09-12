@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Add Metronic CSS and other dependencies here -->
+    <title>{{ product.name }}</title>
+</head>
+
+<body>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="{{ product.images }}" alt="{{ product.name }}" class="img-fluid">
+            </div>
+            <div class="col-md-6">
+                <h2>{{ product.name }}</h2>
+                <p><strong>Type:</strong> {{ product.type }}</p>
+                <p><strong>Status:</strong> {{ product.status }}</p>
+                <p><strong>SKU:</strong> {{ product.sku }}</p>
+                <p><strong>Regular Price:</strong> ${{ product.regular_price }}</p>
+                <p><strong>Sale Price:</strong> ${{ product.sale_price }}</p>
+                <p><strong>Stock:</strong> {{ product.stock_status }} ({{ product.stock_quantity }} items)</p>
+                <p><strong>Weight:</strong> {{ product.weight }}</p>
+                <p><strong>Shipping Class:</strong> {{ product.shipping_class }}</p>
+                <p><strong>Categories:</strong> {{ product.categories }}</p>
+                <p><strong>Attributes:</strong> {{ product.attributes }}</p>
+                <!-- Add other product details as needed -->
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-12">
+                <h4>Description:</h4>
+                <p>{{ product.description|safe }}</p>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-12">
+                <h4>Short Description:</h4>
+                <p>{{ product.short_description|safe }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Metronic JS and other dependencies here -->
+
+</body>
+
+</html>

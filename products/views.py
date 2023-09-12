@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Product
 import requests
 import time
@@ -110,7 +110,7 @@ def import_new_products(request):
     }
 
     all_products = []
-    for page in range(1, 11):  # 10 pages x 100 products/page = 1000 products
+    for page in range(1, 3):  # 10 pages x 100 products/page = 1000 products
         params['page'] = page
         response = requests.get(product_url, params=params)
         products = response.json()
@@ -149,8 +149,6 @@ def import_new_products(request):
 
 
 
-
-
 def resync_existing_products():
     base_url = "https://www.c2kft.co.uk/wp-json/wc/v3/"
     product_url = base_url + "products"
@@ -159,9 +157,15 @@ def resync_existing_products():
         "consumer_secret": "cs_d2eec78a6976a95b2f73b58644505812b2c12d6d",
         "per_page": 100,
     }
+    
+    # Separate params for variations to avoid any interference
+    variation_params = {
+        "consumer_key": params["consumer_key"],
+        "consumer_secret": params["consumer_secret"],
+    }
 
     all_products = []
-    for page in range(1, 11):
+    for page in range(1, 3):  # Fetching 200 products
         params['page'] = page
         response = requests.get(product_url, params=params)
         products = response.json()
@@ -169,32 +173,37 @@ def resync_existing_products():
             break
         all_products.extend(products)
 
-    total_products = len(all_products)
-    for index, product in enumerate(all_products, start=1):
+    for product in all_products:
+        print(f"Fetched product: {product['id']} - {product['name']}")
+
         if Product.objects.filter(product_id=product['id']).exists():
             existing_product = Product.objects.get(product_id=product['id'])
             updated_data = build_product_data(product)
             for key, value in updated_data.items():
                 setattr(existing_product, key, value)
             existing_product.save()
+            print(f"Updated product {product['id']}")
 
-            if product['type'] == 'variable':
-                variation_url = base_url + f"products/{product['id']}/variations"
-                variations_response = requests.get(variation_url, params=params)
-                variations = variations_response.json()
-                
-                for variation in variations:
-                    if Product.objects.filter(product_id=variation['id']).exists():
-                        existing_variation = Product.objects.get(product_id=variation['id'])
-                        updated_variation_data = build_product_data(product, product_type='variation', variation=variation)
-                        for key, value in updated_variation_data.items():
-                            setattr(existing_variation, key, value)
-                        existing_variation.save()
+        if product['type'] == 'variable':
+            print(f"Fetching variations for product {product['id']}")
+            variation_url = base_url + f"products/{product['id']}/variations"
+            variations_response = requests.get(variation_url, params=variation_params)
+            variations = variations_response.json()
 
-        # Log to the console:
-        print(f"Product Resync Progress: {index} out of {total_products}")
+            for variation in variations:
+                print(f"Found variation: {variation['id']}")
+                if Product.objects.filter(product_id=variation['id']).exists():
+                    existing_variation = Product.objects.get(product_id=variation['id'])
+                    updated_variation_data = build_product_data(product, product_type='variation', variation=variation)
+                    for key, value in updated_variation_data.items():
+                        setattr(existing_variation, key, value)
+                    existing_variation.save()
+                    print(f"Updated variation {variation['id']} of product {product['id']}")
+                else:
+                    print(f"Variation {variation['id']} not found in the database.")
 
-    print("Product Resync Completed!")
+    print("Resync Completed!")
+
 
 
 
@@ -219,9 +228,13 @@ def get_progress(request):
 
 def display_products(request):
     all_products = Product.objects.all()
-    paginator = Paginator(all_products, 25)  # Show 25 products per page
+    paginator = Paginator(all_products, 10)  # Show 25 products per page
 
     page_number = request.GET.get('page')
     products = paginator.get_page(page_number)
 
     return render(request, 'products_table.html', {'products': products})
+
+def product_page(request, product_name):
+    product = get_object_or_404(Product, name=product_name)
+    return render(request, 'products.html', {'product': product})
