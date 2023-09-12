@@ -235,6 +235,6 @@ def display_products(request):
 
     return render(request, 'products_table.html', {'products': products})
 
-def product_page(request, product_name):
-    product = get_object_or_404(Product, name=product_name)
+def product_page(request, product_slug):
+    product = get_object_or_404(Product, slug=product_slug)
     return render(request, 'products.html', {'product': product})

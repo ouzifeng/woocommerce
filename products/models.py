@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
 
 class Product(models.Model):
     product_id = models.IntegerField(unique=True)
@@ -24,6 +25,18 @@ class Product(models.Model):
     attributes = models.TextField()  # JSON-like text field or can be improved with a ForeignKey or ManyToMany relationship
     default_attributes = models.TextField()
     variations = models.TextField()
+    slug = models.SlugField(unique=True, blank=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            original_slug = slugify(self.name)
+            self.slug = original_slug
+            counter = 1
+            while Product.objects.filter(slug=self.slug).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
+        super(Product, self).save(*args, **kwargs)
+
 
     def __str__(self):
         return self.name
@@ -32,3 +45,5 @@ class UserColumnPreference(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     column_name = models.CharField(max_length=255)
     is_visible = models.BooleanField(default=True)
+    
+    

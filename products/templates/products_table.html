@@ -81,12 +81,8 @@
                             <td class="col-thumbnail"><img src="{{ product.images }}" alt="{{ product.name }}"
                                     width="50">
                             </td>
-                            <td class="col-name">
-                                <a href="{% url 'product_page' product_name=product.name %}">
-                                    {{ product.name|truncatechars:30 }}
-                                </a>
-                            </td>
-
+                            <td class="col-name"><a href="{% url 'product_page' product_slug=product.slug %}">
+                                    {{ product.name|truncatechars:30 }}</a></td>
 
                             <td class="col-sku">{{ product.sku }}</td>
                             <td class="col-regular_price">{{ product.regular_price }}</td>
