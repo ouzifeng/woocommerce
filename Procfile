@@ -1,1 +1,1 @@
-web: gunicorn woocommerce-app.wsgi
+web: gunicorn woocommerce-database.wsgi
