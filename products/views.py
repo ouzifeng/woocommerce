@@ -227,7 +227,7 @@ def get_progress(request):
     return JsonResponse({'progress': progress})
 
 def display_products(request):
-    all_products = Product.objects.all()
+    all_products = Product.objects.all().order_by('name', 'product_id')
     paginator = Paginator(all_products, 10)  # Show 25 products per page
 
     page_number = request.GET.get('page')
