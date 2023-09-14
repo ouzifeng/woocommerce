@@ -10,3 +10,4 @@ tzdata==2023.3
 urllib3==2.0.4
 WooCommerce==3.0.0
 gunicorn
+python-decouple==3.5
