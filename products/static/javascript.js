@@ -1,4 +1,3 @@
-
 $(document).ready(function () {
     $(".column-toggle").change(function () {
         let columnName = $(this).val();
@@ -83,6 +82,68 @@ $(document).ready(function() {
         }, 500);
     });
 });
+
+
+$(document).ready(function() {
+    var productIds = [];
+    
+    $(".col-product_id").each(function() {
+        var productId = parseInt($(this).text().trim());
+        if (!isNaN(productId) && productIds.indexOf(productId) === -1) {
+            productIds.push(productId);
+        }
+    });
+
+    $.ajax({
+        url: '/fetch-live-product-data/',
+        data: {
+            'product_ids': productIds.join(',')
+        },
+        success: function(response) {
+            var discrepantProductIds = [];
+            
+            for (var productId in response) {
+                var data = response[productId];
+                
+                if (updateTableData(productId, 'regular_price', data.regular_price) ||
+                    updateTableData(productId, 'sale_price', data.sale_price) ||
+                    updateTableData(productId, 'stock_quantity', data.stock_quantity)) {
+                        
+                    discrepantProductIds.push(productId);
+                }
+            }
+
+            if (discrepantProductIds.length > 0) {
+                // Now, inside this if block, make the AJAX call to `/update-products/`
+                $.ajax({
+                    url: '/update-products/',
+                    type: 'POST',
+                    data: {
+                        'product_ids': discrepantProductIds.join(','),
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    success: function(response) {
+                        // Handle success here if needed
+                    }
+                });
+            }
+        }
+    });
+});
+
+function updateTableData(productId, type, apiValue) {
+    var currentElem = $(`td[data-product-id='${productId}'][data-product-type='${type}']`);
+    var currentValue = parseFloat(currentElem.text());
+
+    if (currentValue !== parseFloat(apiValue)) {
+        currentElem.text(apiValue);
+        return true;  // Indicating there was a discrepancy
+    }
+    return false;
+}
+
+
+
 
 
 

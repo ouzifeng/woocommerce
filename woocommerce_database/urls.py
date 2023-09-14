@@ -26,4 +26,6 @@ urlpatterns = [
     path('resync_products/', views.resync_products_view, name='resync_products'),
     path('get-progress/', views.get_progress, name='get_progress'),
     path('product-page/<slug:product_slug>/', views.product_page, name='product_page'),
+    path('fetch-live-product-data/', views.fetch_live_product_data, name='fetch_live_product_data'),
+    path('update-products/', views.update_products, name='update_products'),
 ]

@@ -7,13 +7,15 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
     {% load static %}
+    {% load custom_filters %}
     <link rel="stylesheet" href="{% static 'style.css' %}">
-    <script src="{% static 'javascript.js' %}" defer></script>
+
 
 </head>
 
 {% block content %}
 <div class="container mt-5">
+    {% csrf_token %}
     <div class="row">
         <div class="col-12">
             <!-- Modal -->
@@ -78,16 +80,27 @@
                         <tr>
                             <td class="col-product_id">{{ product.product_id }}</td>
                             <td class="col-type">{{ product.type }}</td>
-                            <td class="col-thumbnail"><img src="{{ product.images }}" alt="{{ product.name }}"
-                                    width="50">
+                            <td class="col-thumbnail">
+                                {% with images_list=product.images|split_string:',' %}
+                                <img src="{{ images_list.0 }}" alt="{{ product.name }}" width="50">
+                                {% endwith %}
                             </td>
+
+
                             <td class="col-name"><a href="{% url 'product_page' product_slug=product.slug %}">
                                     {{ product.name|truncatechars:30 }}</a></td>
 
                             <td class="col-sku">{{ product.sku }}</td>
-                            <td class="col-regular_price">{{ product.regular_price }}</td>
-                            <td class="col-sale_price">{{ product.sale_price }}</td>
-                            <td class="col-stock_quantity">{{ product.stock_quantity }}</td>
+                            <td class="col-regular_price>" data-product-id="{{ product.product_id }}"
+                                data-product-type="regular_price">{{ product.regular_price }}</td>
+
+                            <td class="col-sale_price" data-product-id="{{ product.product_id }}"
+                                data-product-type="sale_price">{{ product.sale_price|default:"" }}</td>
+                            <td class="col-stock_quantity" data-product-id="{{ product.product_id }}"
+                                data-product-type="stock_quantity">{{ product.stock_quantity }}</td>
+
+
+
                             <!-- Short Description Modal -->
                             <td class="col-short_description">
                                 <button type="button" class="btn btn-info" data-toggle="modal"
@@ -230,15 +243,18 @@
     </div>
 </div>
 
-
 <!-- jQuery library -->
+<!-- Load jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 
 <!-- Popper JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 
 <!-- Bootstrap JS -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="{% static 'javascript.js' %}"></script>
 
 
 

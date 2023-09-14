@@ -1,6 +1,5 @@
 from django.contrib import admin, messages
 from .models import Product
-from .views import fetch_products_from_woocommerce
 
 def import_products(modeladmin, request, queryset):
     # Notify start of import

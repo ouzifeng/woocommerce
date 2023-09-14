@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify
 
 class Product(models.Model):
-    product_id = models.IntegerField(unique=True)
+    product_id = models.IntegerField(unique=True, primary_key=True)
     name = models.CharField(max_length=255)
     permalink = models.URLField()
     type = models.CharField(max_length=50)
@@ -40,6 +40,13 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    
+class ProductMetaData(models.Model):
+    key = models.CharField(max_length=255)
+    value = models.TextField()
+    description = models.TextField(blank=True, null=True)
+    
+    product = models.ForeignKey(Product, related_name='meta_data', on_delete=models.CASCADE)    
 
 class UserColumnPreference(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
