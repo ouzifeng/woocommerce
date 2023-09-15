@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    {% load static %}
+    {% load order_filters %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <title>Order #{{ order.order_id }}</title>
+</head>
+
+<body>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Order Details</h2>
+                <p><strong>Order ID:</strong> {{ order.order_id }}</p>
+                <p><strong>Status:</strong> {{ order.status }}</p>
+                <p><strong>Date Created:</strong> {{ order.date_created }}</p>
+                <p><strong>Shipping Total:</strong> £{{ order.shipping_total }}</p>
+                <p><strong>Total:</strong> £{{ order.total }}</p>
+                <p><strong>Customer Name:</strong> {{ order.billing.first_name }} {{ order.billing.last_name }}</p>
+                <p><strong>Email:</strong> {{ order.billing.email }}</p>
+                <p><strong>Phone:</strong> {{ order.billing.phone }}</p>
+                <p><strong>Tracking Number:</strong> {{ order|get_metadata_value:"tracking_number" }}</p>
+                <p><strong>Shipping Company:</strong> {{ order|get_metadata_value:"shipping_company" }}</p>
+            </div>
+
+            <div class="col-md-6">
+                <h3>Billing Address</h3>
+                <address>
+                    {{ order.billing.first_name }} {{ order.billing.last_name }}<br>
+                    {{ order.billing.address_1 }}<br>
+                    {{ order.billing.address_2 }}<br>
+                    {{ order.billing.city }}, {{ order.billing.postcode }}<br>
+                    {{ order.billing.country }}
+                </address>
+
+                <h3>Shipping Address</h3>
+                <address>
+                    {{ order.shipping.first_name }} {{ order.shipping.last_name }}<br>
+                    {{ order.shipping.address_1 }}<br>
+                    {{ order.shipping.address_2 }}<br>
+                    {{ order.shipping.city }}, {{ order.shipping.postcode }}<br>
+                    {{ order.shipping.country }}
+                </address>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-12">
+                <h4>Order Notes:</h4>
+                <p>{{ order.customer_note }}</p>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
