@@ -6,10 +6,11 @@ from django.core.paginator import Paginator
 from decimal import Decimal
 from django.db.utils import IntegrityError
 from django.db import transaction
+import os
 
-WC_CONSUMER_KEY = 'ck_3f9848c65bd04057454cc23cf514d0e0abb5bf3a'
-WC_CONSUMER_SECRET = 'cs_d2eec78a6976a95b2f73b58644505812b2c12d6d'
-BASE_URL = 'https://www.c2kft.co.uk/wp-json/wc/v3/'
+WC_CONSUMER_KEY = os.environ.get('WC_CONSUMER_KEY')
+WC_CONSUMER_SECRET = os.environ.get('WC_CONSUMER_SECRET')
+BASE_URL = os.environ.get('BASE_URL')
 PER_PAGE = '100'
 
 
