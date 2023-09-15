@@ -4,28 +4,28 @@ from django.utils.text import slugify
 
 class Product(models.Model):
     product_id = models.IntegerField(unique=True, primary_key=True)
-    name = models.CharField(max_length=255)
-    permalink = models.URLField()
-    type = models.CharField(max_length=50)
-    status = models.CharField(max_length=50)
+    name = models.TextField()
+    permalink = models.URLField(max_length=1000)
+    type = models.TextField()
+    status = models.TextField()
     description = models.TextField()
     short_description = models.TextField()
-    sku = models.CharField(max_length=100, null=True, blank=True)
+    sku = models.TextField(null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     regular_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     total_sales = models.IntegerField()
     stock_quantity = models.IntegerField(null=True, blank=True)
-    stock_status = models.CharField(max_length=50)
-    weight = models.CharField(max_length=50, null=True, blank=True)
-    shipping_class = models.CharField(max_length=100, null=True, blank=True)
+    stock_status = models.TextField()
+    weight = models.TextField(null=True, blank=True)
+    shipping_class = models.TextField(null=True, blank=True)
     parent_id = models.IntegerField(null=True, blank=True)
     categories = models.TextField()  # Can be improved with a ForeignKey for actual categories
-    images = models.URLField()  # The source URL of the main image
+    images = models.URLField(max_length=5000)
     attributes = models.TextField()  # JSON-like text field or can be improved with a ForeignKey or ManyToMany relationship
-    default_attributes = models.TextField()
     variations = models.TextField()
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(unique=True, blank=True, max_length=500)
+
     
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -42,7 +42,7 @@ class Product(models.Model):
         return self.name
     
 class ProductMetaData(models.Model):
-    key = models.CharField(max_length=255)
+    key = models.TextField()
     value = models.TextField()
     description = models.TextField(blank=True, null=True)
     
@@ -50,7 +50,7 @@ class ProductMetaData(models.Model):
 
 class UserColumnPreference(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    column_name = models.CharField(max_length=255)
+    column_name = models.CharField(max_length=1000)
     is_visible = models.BooleanField(default=True)
     
     

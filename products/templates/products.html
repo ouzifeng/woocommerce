@@ -41,13 +41,12 @@
                 <p><strong>Type:</strong> {{ product.type }}</p>
                 <p><strong>Status:</strong> {{ product.status }}</p>
                 <p><strong>SKU:</strong> {{ product.sku }}</p>
-                <p><strong>Regular Price:</strong> ${{ product.regular_price }}</p>
-                <p><strong>Sale Price:</strong> ${{ product.sale_price }}</p>
+                <p><strong>Regular Price:</strong> £{{ product.regular_price }}</p>
+                <p><strong>Sale Price:</strong> £{{ product.sale_price }}</p>
                 <p><strong>Stock:</strong> {{ product.stock_status }} ({{ product.stock_quantity }} items)</p>
                 <p><strong>Weight:</strong> {{ product.weight }}</p>
                 <p><strong>Shipping Class:</strong> {{ product.shipping_class }}</p>
-                <p><strong>Categories:</strong> {{ product.categories }}</p>
-                <p><strong>Attributes:</strong> {{ product.attributes }}</p>
+                <p><strong>Categories:</strong> {{ product.categories|safe }}</p>
                 <table border="1">
                     <thead>
                         <tr>
@@ -66,6 +65,37 @@
                         {% endfor %}
                     </tbody>
                 </table>
+
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Position</th>
+                            <th>Visible</th>
+                            <th>Variation</th>
+                            <th>Options</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for attribute in attributes %}
+                        <tr>
+                            <td>{{ attribute.name }}</td>
+                            <td>{{ attribute.position }}</td>
+                            <td>{{ attribute.visible }}</td>
+                            <td>{{ attribute.variation }}</td>
+                            <td>
+                                {% for option in attribute.options %}
+                                {{ option }},
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+
+
+
 
 
                 <!-- Add other product details as needed -->
