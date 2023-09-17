@@ -1,3 +1,7 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
 <head>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
@@ -12,253 +16,256 @@
     <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 
-{% block content %}
-<div class="container mt-5">
-    {% csrf_token %}
-    <div class="row">
-        <div class="col-12">
-            <!-- Modal -->
-            <div class="modal fade" id="progressModal" tabindex="-1" aria-labelledby="progressModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="progressModalLabel">Product Import Progress</h5>
-                        </div>
-                        <div class="modal-body">
-                            <p id="progressText">Starting import...</p>
+<body>
+    {% include "global/navbar.html" %}
+    {% block content %}
+    <div class="container mt-5">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-12">
+                <!-- Modal -->
+                <div class="modal fade" id="progressModal" tabindex="-1" aria-labelledby="progressModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="progressModalLabel">Product Import Progress</h5>
+                            </div>
+                            <div class="modal-body">
+                                <p id="progressText">Starting import...</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col-md-2">
-                    <h3 class="mb-4">Product List</h3>
+                <div class="row">
+                    <div class="col-md-2">
+                        <h3 class="mb-4">Product List</h3>
+                    </div>
+                    <div class="col-md-2">
+                        {% include "global/checkbox.html" %}
+                    </div>
+                    <!-- Product Import Button -->
+                    <div class="col-md-2">
+                        <a href="{% url 'import_products' %}" class="btn btn-success" id="importButton">Import
+                            Products</a>
+                    </div>
+
+                    <div class="col-md-2">
+                        <!-- Product Resync Button -->
+                        <a href="{% url 'resync_products' %}" class="btn btn-warning" id="resyncButton">Resync
+                            Products</a>
+                    </div>
+
+
                 </div>
-                <div class="col-md-2">
-                    {% include "global/checkbox.html" %}
-                </div>
-                <!-- Product Import Button -->
-                <div class="col-md-2">
-                    <a href="{% url 'import_products' %}" class="btn btn-success" id="importButton">Import
-                        Products</a>
-                </div>
-
-                <div class="col-md-2">
-                    <!-- Product Resync Button -->
-                    <a href="{% url 'resync_products' %}" class="btn btn-warning" id="resyncButton">Resync
-                        Products</a>
-                </div>
-
-
-            </div>
-            <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th class="col-product_id">Product ID</th>
-                            <th class="col-type">Type</th>
-                            <th class="col-thumbnail">Thumbnail</th>
-                            <th class="col-name">Name</th>
-                            <th class="col-sku">SKU</th>
-                            <th class="col-regular_price">Regular Price</th>
-                            <th class="col-sale_price">Sale Price</th>
-                            <th class="col-stock_quantity">Stock Quantity</th>
-                            <th class="col-short_description">Short Description</th>
-                            <th class="col-description">Description</th>
-                            <th class="col-weight">Weight</th>
-                            <th class="col-status">Status</th>
-                            <th class="col-shipping_class">Shipping Class</th>
-                            <th class="col-categories">Categories</th>
-                            <th class="col-attributes">Attributes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for product in products %}
-                        <tr>
-                            <td class="col-product_id">{{ product.product_id }}</td>
-                            <td class="col-type">{{ product.type }}</td>
-                            <td class="col-thumbnail">
-                                {% with images_list=product.images|split_string:',' %}
-                                <img src="{{ images_list.0 }}" alt="{{ product.name }}" width="50">
-                                {% endwith %}
-                            </td>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th class="col-product_id">Product ID</th>
+                                <th class="col-type">Type</th>
+                                <th class="col-thumbnail">Thumbnail</th>
+                                <th class="col-name">Name</th>
+                                <th class="col-sku">SKU</th>
+                                <th class="col-regular_price">Regular Price</th>
+                                <th class="col-sale_price">Sale Price</th>
+                                <th class="col-stock_quantity">Stock Quantity</th>
+                                <th class="col-short_description">Short Description</th>
+                                <th class="col-description">Description</th>
+                                <th class="col-weight">Weight</th>
+                                <th class="col-status">Status</th>
+                                <th class="col-shipping_class">Shipping Class</th>
+                                <th class="col-categories">Categories</th>
+                                <th class="col-attributes">Attributes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr>
+                                <td class="col-product_id">{{ product.product_id }}</td>
+                                <td class="col-type">{{ product.type }}</td>
+                                <td class="col-thumbnail">
+                                    {% with images_list=product.images|split_string:',' %}
+                                    <img src="{{ images_list.0 }}" alt="{{ product.name }}" width="50">
+                                    {% endwith %}
+                                </td>
 
 
-                            <td class="col-name"><a href="{% url 'product_page' product_slug=product.slug %}">
-                                    {{ product.name|truncatechars:30 }}</a></td>
+                                <td class="col-name"><a href="{% url 'product_page' product_slug=product.slug %}">
+                                        {{ product.name|truncatechars:30 }}</a></td>
 
-                            <td class="col-sku">{{ product.sku }}</td>
-                            <td class="col-regular_price>" data-product-id="{{ product.product_id }}"
-                                data-product-type="regular_price">{{ product.regular_price }}</td>
+                                <td class="col-sku">{{ product.sku }}</td>
+                                <td class="col-regular_price>" data-product-id="{{ product.product_id }}"
+                                    data-product-type="regular_price">{{ product.regular_price }}</td>
 
-                            <td class="col-sale_price" data-product-id="{{ product.product_id }}"
-                                data-product-type="sale_price">{{ product.sale_price|default:"" }}</td>
-                            <td class="col-stock_quantity" data-product-id="{{ product.product_id }}"
-                                data-product-type="stock_quantity">{{ product.stock_quantity }}</td>
+                                <td class="col-sale_price" data-product-id="{{ product.product_id }}"
+                                    data-product-type="sale_price">{{ product.sale_price|default:"" }}</td>
+                                <td class="col-stock_quantity" data-product-id="{{ product.product_id }}"
+                                    data-product-type="stock_quantity">{{ product.stock_quantity }}</td>
 
 
 
-                            <!-- Short Description Modal -->
-                            <td class="col-short_description">
-                                <button type="button" class="btn btn-info" data-bs-toggle="modal"
-                                    data-bs-target="#shortDescModal{{ product.product_id }}">
-                                    View
-                                </button>
+                                <!-- Short Description Modal -->
+                                <td class="col-short_description">
+                                    <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                                        data-bs-target="#shortDescModal{{ product.product_id }}">
+                                        View
+                                    </button>
 
-                                <!-- Modal -->
-                                <div class="modal fade" id="shortDescModal{{ product.product_id }}" tabindex="-1"
-                                    aria-labelledby="shortDescModalLabel{{ product.product_id }}" aria-hidden="true">
-                                    <div class="modal-dialog wide-modal">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title"
-                                                    id="shortDescModalLabel{{ product.product_id }}">
-                                                    Short Description
-                                                </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                {{ product.short_description|safe }}
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="shortDescModal{{ product.product_id }}" tabindex="-1"
+                                        aria-labelledby="shortDescModalLabel{{ product.product_id }}"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog wide-modal">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title"
+                                                        id="shortDescModalLabel{{ product.product_id }}">
+                                                        Short Description
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    {{ product.short_description|safe }}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </td>
+                                </td>
 
-                            <!-- Description Modal -->
-                            <td class="col-description">
-                                <button type="button" class="btn btn-info" data-bs-toggle="modal"
-                                    data-bs-target="#descModal{{ product.product_id }}">
-                                    View
-                                </button>
+                                <!-- Description Modal -->
+                                <td class="col-description">
+                                    <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                                        data-bs-target="#descModal{{ product.product_id }}">
+                                        View
+                                    </button>
 
-                                <!-- Modal -->
-                                <div class="modal fade" id="descModal{{ product.product_id }}" tabindex="-1"
-                                    aria-labelledby="descModalLabel{{ product.product_id }}" aria-hidden="true">
-                                    <div class="modal-dialog wide-modal">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="descModalLabel{{ product.product_id }}">
-                                                    Description
-                                                </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                {{ product.description|safe }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="col-weight">{{ product.weight }}</td>
-                            <td class="col-status">{{ product.status }}</td>
-                            <td class="col-shipping_class">{{ product.shipping_class }}</td>
-                            <!-- Category Modal -->
-                            <td class="col-category">
-                                <button type="button" class="btn btn-info" data-bs-toggle="modal"
-                                    data-bs-target="#categoryModal{{ category.category_id }}">
-                                    View
-                                </button>
-
-                                <!-- Modal -->
-                                <div class="modal fade" id="categoryModal{{ category.category_id }}" tabindex="-1"
-                                    aria-labelledby="categoryModalLabel{{ category.category_id }}" aria-hidden="true">
-                                    <div class="modal-dialog wide-modal">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title"
-                                                    id="categoryModalLabel{{ category.category_id }}">
-                                                    Category
-                                                </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                {{ product.categories|safe }}
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="descModal{{ product.product_id }}" tabindex="-1"
+                                        aria-labelledby="descModalLabel{{ product.product_id }}" aria-hidden="true">
+                                        <div class="modal-dialog wide-modal">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="descModalLabel{{ product.product_id }}">
+                                                        Description
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    {{ product.description|safe }}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </td>
+                                </td>
+                                <td class="col-weight">{{ product.weight }}</td>
+                                <td class="col-status">{{ product.status }}</td>
+                                <td class="col-shipping_class">{{ product.shipping_class }}</td>
+                                <!-- Category Modal -->
+                                <td class="col-category">
+                                    <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                                        data-bs-target="#categoryModal{{ category.category_id }}">
+                                        View
+                                    </button>
 
-                            <!-- Attributes Modal -->
-                            <td class="col-attributes">
-                                <!-- Trigger button for attributes modal -->
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#attributesModal-{{ product.id }}">
-                                    View
-                                </button>
-
-                                <!-- Modal -->
-                                <div class="modal fade" id="attributesModal-{{ product.id }}" tabindex="-1"
-                                    aria-labelledby="attributesModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog wide-modal">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="attributesModalLabel">Attributes for {{
-                                                    product.name }}</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                {{ product.attributes|safe }}
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Close</button>
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="categoryModal{{ category.category_id }}" tabindex="-1"
+                                        aria-labelledby="categoryModalLabel{{ category.category_id }}"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog wide-modal">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title"
+                                                        id="categoryModalLabel{{ category.category_id }}">
+                                                        Category
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    {{ product.categories|safe }}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </td>
+                                </td>
 
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <!-- Pagination controls -->
-            <div class="pagination">
-                <span class="step-links">
-                    {% if products.has_previous %}
-                    <a href="?page=1">&laquo; first</a>
-                    <a href="?page={{ products.previous_page_number }}">previous</a>
-                    {% endif %}
+                                <!-- Attributes Modal -->
+                                <td class="col-attributes">
+                                    <!-- Trigger button for attributes modal -->
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#attributesModal-{{ product.id }}">
+                                        View
+                                    </button>
 
-                    <span class="current">
-                        Page {{ products.number }} of {{ products.paginator.num_pages }}.
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="attributesModal-{{ product.id }}" tabindex="-1"
+                                        aria-labelledby="attributesModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog wide-modal">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="attributesModalLabel">Attributes for {{
+                                                        product.name }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    {{ product.attributes|safe }}
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination controls -->
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if products.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ products.previous_page_number }}">previous</a>
+                        {% endif %}
+
+                        <span class="current">
+                            Page {{ products.number }} of {{ products.paginator.num_pages }}.
+                        </span>
+
+                        {% if products.has_next %}
+                        <a href="?page={{ products.next_page_number }}">next</a>
+                        <a href="?page={{ products.paginator.num_pages }}">last &raquo;</a>
+                        {% endif %}
                     </span>
+                </div>
 
-                    {% if products.has_next %}
-                    <a href="?page={{ products.next_page_number }}">next</a>
-                    <a href="?page={{ products.paginator.num_pages }}">last &raquo;</a>
-                    {% endif %}
-                </span>
             </div>
-
         </div>
     </div>
-</div>
 
-<!-- jQuery library -->
-<!-- Load jQuery -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <footer class="text-center py-4">
+        <p>&copy; 2023 Your Store. All Rights Reserved.</p>
+    </footer>
 
+    <!-- Optional: Add some JS scripts or libraries -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
 
-<!-- Popper JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="{% static 'javascript.js' %}"></script>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-    crossorigin="anonymous"></script>
+    {% endblock %}
+</body>
 
-<script src="{% static 'javascript.js' %}"></script>
-
-
-
-{% endblock %}
+</html>

@@ -141,10 +141,3 @@ function updateTableData(productId, type, apiValue) {
     }
     return false;
 }
-
-
-
-
-
-
-

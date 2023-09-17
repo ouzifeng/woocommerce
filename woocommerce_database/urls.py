@@ -22,7 +22,9 @@ from orders import views as order_views
 
 
 urlpatterns = [
+    # Admin urls
     path("admin/", admin.site.urls),
+    # Product urls
     path('products/', product_views.display_products, name='display_products'),
     path('import_products/', product_views.import_products_view, name='import_products'),
     path('resync_products/', product_views.resync_products_view, name='resync_products'),
@@ -30,8 +32,12 @@ urlpatterns = [
     path('product-page/<slug:product_slug>/', product_views.product_page, name='product_page'),
     path('fetch-live-product-data/', product_views.fetch_live_product_data, name='fetch_live_product_data'),
     path('update-products/', product_views.update_products, name='update_products'),
+    # Order urls
     path('orders/', order_views.display_orders, name='display_orders'),
     path('import_orders/', order_views.import_orders_view, name='import_orders'),
     path('order_details/<int:order_id>/', order_views.order_details, name='order_details'),
+    path('orders/fetch_live_data/', order_views.fetch_live_order_data, name='fetch_live_order_data'),
+    path('orders/update_orders/', order_views.update_orders, name='update_orders'),
+    # Main site urls
     path('', product_views.landing_page, name='landing_page'),
 ]

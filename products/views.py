@@ -68,11 +68,6 @@ def product_page(request, product_slug):
     return render(request, 'products.html', context)
 
 
-
-
-
-
-
 def update_products(request):
     """Update product values in the database based on discrepancies with live data."""
     product_ids = request.POST.get('product_ids').split(',')

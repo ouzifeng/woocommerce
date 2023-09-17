@@ -1,5 +1,4 @@
-import requests, os
-import json
+import requests, os, json
 from .models import (Order, BillingProperties, ShippingProperties, 
                     OrderMetaData, CouponLines, Refunds, Taxes, OrderItem)
 from django.core.paginator import Paginator
@@ -8,6 +7,7 @@ from datetime import datetime
 from decimal import Decimal
 from django.utils import timezone
 from products.models import Product
+from django.http import JsonResponse
 
 
 def load_credentials(filename="creds.json"):
@@ -173,13 +173,14 @@ def import_orders_from_woocommerce():
         order.save()
 
 def display_orders(request):
-    all_orders = Order.objects.all().order_by('-date_created')  # Displaying the latest orders first
-    paginator = Paginator(all_orders, 10)  # Show 10 orders per page
-
+    all_orders = Order.objects.all().order_by('-date_created')
+    paginator = Paginator(all_orders, 10)
     page_number = request.GET.get('page')
     paginated_orders = paginator.get_page(page_number)
-
     return render(request, 'orders_table.html', {'orders': paginated_orders})
+
+
+
 
 def import_orders_view(request):
     import_orders_from_woocommerce()
@@ -193,3 +194,50 @@ def order_details(request, order_id):
     # Render the order details template with the order object
     return render(request, 'order_page.html', {'order': order})
 
+def fetch_live_order_data(request):
+    order_ids = request.GET.get('order_ids').split(',')
+    live_data = get_live_order_data(order_ids)
+    return JsonResponse(live_data)
+
+def update_orders(request):
+    """Update order statuses in the database based on discrepancies with live data."""
+    order_ids = request.POST.get('order_ids').split(',')
+    live_data = get_live_order_data(order_ids)
+    print(f"Order IDs received: {order_ids}")
+    
+    for order_id_str in live_data:
+        order_id = int(order_id_str)
+        print(f"Processing order_id: {order_id}")
+
+        order_query = Order.objects.filter(pk=order_id)  # Assuming you have an Order model
+        if not order_query.exists():
+            print(f"Order with ID {order_id} not found in the database!")
+            continue
+        
+        order = order_query.first()
+        data = live_data[order_id_str]
+
+        # Check for order status discrepancy
+        if data['status'] and order.status != data['status']:
+            order.status = data['status']
+            try:
+                order.save()
+                print(f"Updated order {order_id} status to {order.status}")
+            except Exception as e:
+                print(f"Error updating order {order_id}: {e}")
+
+    return JsonResponse({'status': 'success'})
+
+def get_live_order_data(order_ids):
+    params = {
+        "consumer_key": WC_CONSUMER_KEY,
+        "consumer_secret": WC_CONSUMER_SECRET,
+        "include": ",".join(map(str, order_ids)),
+    }    
+    
+    order_url = BASE_URL + "orders"
+    response = requests.get(order_url, params=params)
+    orders_data = response.json()
+
+    # Convert the list of orders into a dictionary with order_id as the key
+    return {order['id']: order for order in orders_data}
