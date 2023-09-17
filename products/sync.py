@@ -18,7 +18,7 @@ credentials = load_credentials()
 WC_CONSUMER_KEY = credentials["WC_CONSUMER_KEY"]
 WC_CONSUMER_SECRET = credentials["WC_CONSUMER_SECRET"]
 BASE_URL = credentials["BASE_URL"]
-PE_PAGE = 100
+PER_PAGE = 100
 
 
 def build_product_data(product, product_type='product', variation=None):
