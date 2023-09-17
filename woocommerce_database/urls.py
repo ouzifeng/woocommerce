@@ -30,7 +30,8 @@ urlpatterns = [
     path('product-page/<slug:product_slug>/', product_views.product_page, name='product_page'),
     path('fetch-live-product-data/', product_views.fetch_live_product_data, name='fetch_live_product_data'),
     path('update-products/', product_views.update_products, name='update_products'),
-    path('display_orders/', order_views.display_orders, name='display_orders'),
+    path('orders/', order_views.display_orders, name='display_orders'),
     path('import_orders/', order_views.import_orders_view, name='import_orders'),
     path('order_details/<int:order_id>/', order_views.order_details, name='order_details'),
+    path('', product_views.landing_page, name='landing_page'),
 ]

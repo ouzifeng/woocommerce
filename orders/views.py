@@ -10,9 +10,16 @@ from django.utils import timezone
 from products.models import Product
 
 
-WC_CONSUMER_KEY = 'ck_3f9848c65bd04057454cc23cf514d0e0abb5bf3a'
-WC_CONSUMER_SECRET = 'cs_d2eec78a6976a95b2f73b58644505812b2c12d6d'
-BASE_URL = 'https://www.c2kft.co.uk/wp-json/wc/v3/'
+def load_credentials(filename="creds.json"):
+    with open(filename, "r") as file:
+        data = json.load(file)
+    return data
+
+credentials = load_credentials()
+
+WC_CONSUMER_KEY = credentials["WC_CONSUMER_KEY"]
+WC_CONSUMER_SECRET = credentials["WC_CONSUMER_SECRET"]
+BASE_URL = credentials["BASE_URL"]
 PER_PAGE = '10'
 
 
@@ -185,3 +192,4 @@ def order_details(request, order_id):
     
     # Render the order details template with the order object
     return render(request, 'order_page.html', {'order': order})
+

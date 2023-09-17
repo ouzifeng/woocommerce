@@ -130,3 +130,6 @@ def update_products(request):
                 print(f"Error updating product {product_id}: {e}")
 
     return JsonResponse({'status': 'success'})
+
+def landing_page(request):
+    return render(request, 'index.html')

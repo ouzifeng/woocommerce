@@ -4,13 +4,12 @@
 
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
     {% load static %}
     {% load custom_filters %}
     <link rel="stylesheet" href="{% static 'style.css' %}">
-
-
 </head>
 
 {% block content %}
@@ -103,23 +102,23 @@
 
                             <!-- Short Description Modal -->
                             <td class="col-short_description">
-                                <button type="button" class="btn btn-info" data-toggle="modal"
-                                    data-target="#shortDescModal{{ product.product_id }}">View</button>
+                                <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                                    data-bs-target="#shortDescModal{{ product.product_id }}">
+                                    View
+                                </button>
 
                                 <!-- Modal -->
                                 <div class="modal fade" id="shortDescModal{{ product.product_id }}" tabindex="-1"
-                                    role="dialog" aria-labelledby="shortDescModalLabel{{ product.product_id }}"
-                                    aria-hidden="true">
+                                    aria-labelledby="shortDescModalLabel{{ product.product_id }}" aria-hidden="true">
                                     <div class="modal-dialog wide-modal">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title"
                                                     id="shortDescModalLabel{{ product.product_id }}">
-                                                    Short Description</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                    aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
+                                                    Short Description
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
                                                 {{ product.short_description|safe }}
@@ -128,24 +127,25 @@
                                     </div>
                                 </div>
                             </td>
+
                             <!-- Description Modal -->
                             <td class="col-description">
-                                <button type="button" class="btn btn-info" data-toggle="modal"
-                                    data-target="#descModal{{ product.product_id }}">View</button>
+                                <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                                    data-bs-target="#descModal{{ product.product_id }}">
+                                    View
+                                </button>
 
                                 <!-- Modal -->
                                 <div class="modal fade" id="descModal{{ product.product_id }}" tabindex="-1"
-                                    role="dialog" aria-labelledby="descModalLabel{{ product.product_id }}"
-                                    aria-hidden="true">
+                                    aria-labelledby="descModalLabel{{ product.product_id }}" aria-hidden="true">
                                     <div class="modal-dialog wide-modal">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="descModalLabel{{ product.product_id }}">
-                                                    Description</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                    aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
+                                                    Description
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
                                                 {{ product.description|safe }}
@@ -157,24 +157,25 @@
                             <td class="col-weight">{{ product.weight }}</td>
                             <td class="col-status">{{ product.status }}</td>
                             <td class="col-shipping_class">{{ product.shipping_class }}</td>
+                            <!-- Category Modal -->
                             <td class="col-category">
-                                <button type="button" class="btn btn-info" data-toggle="modal"
-                                    data-target="#categoryModal{{ category.category_id }}">View</button>
+                                <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                                    data-bs-target="#categoryModal{{ category.category_id }}">
+                                    View
+                                </button>
 
                                 <!-- Modal -->
                                 <div class="modal fade" id="categoryModal{{ category.category_id }}" tabindex="-1"
-                                    role="dialog" aria-labelledby="categoryModalLabel{{ category.category_id }}"
-                                    aria-hidden="true">
+                                    aria-labelledby="categoryModalLabel{{ category.category_id }}" aria-hidden="true">
                                     <div class="modal-dialog wide-modal">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title"
                                                     id="categoryModalLabel{{ category.category_id }}">
-                                                    Category</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                    aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
+                                                    Category
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
                                                 {{ product.categories|safe }}
@@ -187,34 +188,34 @@
                             <!-- Attributes Modal -->
                             <td class="col-attributes">
                                 <!-- Trigger button for attributes modal -->
-                                <button type="button" class="btn btn-primary" data-toggle="modal"
-                                    data-target="#attributesModal-{{ product.id }}">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#attributesModal-{{ product.id }}">
                                     View
                                 </button>
+
                                 <!-- Modal -->
                                 <div class="modal fade" id="attributesModal-{{ product.id }}" tabindex="-1"
-                                    role="dialog" aria-labelledby="attributesModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog wide-modal" role="document">
+                                    aria-labelledby="attributesModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog wide-modal">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="attributesModalLabel">Attributes for {{
                                                     product.name }}</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                    aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
                                                 {{ product.attributes|safe }}
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary"
-                                                    data-dismiss="modal">Close</button>
+                                                    data-bs-dismiss="modal">Close</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </td>
+
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -245,14 +246,16 @@
 
 <!-- jQuery library -->
 <!-- Load jQuery -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 
 <!-- Popper JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 
 <!-- Bootstrap JS -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
 
 <script src="{% static 'javascript.js' %}"></script>
 

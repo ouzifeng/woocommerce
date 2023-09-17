@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Product, ProductMetaData
-import requests
+import requests,json
 from django.http import JsonResponse, HttpResponse
 from django.core.paginator import Paginator
 from decimal import Decimal
@@ -8,10 +8,17 @@ from django.db.utils import IntegrityError
 from django.db import transaction
 import os
 
-WC_CONSUMER_KEY = os.environ.get('WC_CONSUMER_KEY')
-WC_CONSUMER_SECRET = os.environ.get('WC_CONSUMER_SECRET')
-BASE_URL = os.environ.get('BASE_URL')
-PER_PAGE = '100'
+def load_credentials(filename="creds.json"):
+    with open(filename, "r") as file:
+        data = json.load(file)
+    return data
+
+credentials = load_credentials()
+
+WC_CONSUMER_KEY = credentials["WC_CONSUMER_KEY"]
+WC_CONSUMER_SECRET = credentials["WC_CONSUMER_SECRET"]
+BASE_URL = credentials["BASE_URL"]
+PE_PAGE = 100
 
 
 def build_product_data(product, product_type='product', variation=None):
