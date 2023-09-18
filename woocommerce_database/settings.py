@@ -143,3 +143,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# Celery Settings
+
+CELERY_BROKER_URL = "redis://:pe707bad61f3a93b273aeaea8d469615af28a6a15a79bd7772e9da3b4b184cb84@ec2-34-241-8-101.eu-west-1.compute.amazonaws.com:21309"

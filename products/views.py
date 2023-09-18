@@ -9,8 +9,6 @@ from django.db import transaction
 from .sync import build_product_data, import_new_products, resync_existing_products, get_live_data
 
 
-
-
 def display_products(request):
     all_products = Product.objects.all().order_by('name', 'product_id')
     paginator = Paginator(all_products, 10)  # Show 10 products per page
@@ -36,6 +34,17 @@ def resync_products_view(request):
     resync_existing_products(request)
     print(request, "Products resynced successfully!")
     return redirect('display_products')
+
+
+#def import_products_view(request):
+#    import_new_products_task.delay()
+#    print("Products imported successfully!")
+#    return redirect('display_products')
+
+#def resync_products_view(request):
+#    resync_existing_products_task.delay()
+#    print(request, "Products resynced successfully!")
+#    return redirect('display_products')
 
 def get_progress(request):
     progress = request.session.get('progress', "Starting import...")

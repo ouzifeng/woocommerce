@@ -1,7 +1,8 @@
 {
     "WC_CONSUMER_KEY": "ck_3f9848c65bd04057454cc23cf514d0e0abb5bf3a",
     "WC_CONSUMER_SECRET": "cs_d2eec78a6976a95b2f73b58644505812b2c12d6d",
-    "BASE_URL": "https://www.c2kft.co.uk/wp-json/wc/v3/"
+    "BASE_URL": "https://www.c2kft.co.uk/wp-json/wc/v3/",
+    "REDIS_URL": "redis://:pe707bad61f3a93b273aeaea8d469615af28a6a15a79bd7772e9da3b4b184cb84@ec2-34-241-8-101.eu-west-1.compute.amazonaws.com:21309"
 }    
 
 
