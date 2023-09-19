@@ -7,6 +7,9 @@ from decimal import Decimal
 from django.db.utils import IntegrityError
 from django.db import transaction
 from .sync import build_product_data, import_new_products, resync_existing_products, get_live_data
+from .forms import ProductSearchForm
+from django.db.models import Q
+from products.tasks import import_new_products_task
 
 
 def display_products(request):
@@ -26,8 +29,9 @@ def fetch_live_product_data(request):
 
 
 def import_products_view(request):
-    import_new_products(request)  # Pass the request object here
-    print("Products imported successfully!")
+    # Trigger the Celery task
+    import_new_products_task.delay()
+    print("Products import task started!")
     return redirect('display_products')
 
 def resync_products_view(request):
@@ -50,7 +54,7 @@ def get_progress(request):
     progress = request.session.get('progress', "Starting import...")
     return JsonResponse({'progress': progress})
 
-
+# Load product page
 def product_page(request, product_slug):
     product = get_object_or_404(Product, slug=product_slug)
     metadata = product.meta_data.all()
@@ -135,5 +139,35 @@ def update_products(request):
 
     return JsonResponse({'status': 'success'})
 
+# Load landing page
 def landing_page(request):
     return render(request, 'index.html')
+
+# Search for products request
+def product_list_view(request):
+    form = ProductSearchForm(request.GET)
+    products = Product.objects.all()
+
+    if 'query' in request.GET:
+        query = request.GET['query']
+        products = products.filter(Q(sku__icontains=query) | Q(name__icontains=query))
+
+    context = {
+        'form': form,
+        'products': products,
+    }
+    return render(request, 'products.html', context)
+
+# Search for products
+def search_products(request):
+    query = request.GET.get('query', '')
+    products = Product.objects.filter(
+        Q(sku__icontains=query) | Q(name__icontains=query)
+    )[:5]  # Limit to 5 results for dropdown
+
+    results = [
+        {'id': product.product_id, 'name': product.name, 'slug': product.slug}
+        for product in products
+    ]
+
+    return JsonResponse(results, safe=False)

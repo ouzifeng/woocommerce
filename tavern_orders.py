@@ -10,7 +10,7 @@ def get_recent_orders():
     params = {
         "consumer_key": WC_CONSUMER_KEY,
         "consumer_secret": WC_CONSUMER_SECRET,
-        "per_page": 10,   # get the latest 10 orders
+        "per_page": 1,   # get the latest 10 orders
         "orderby": "date",
         "order": "desc",
         "status": "completed"

@@ -1,12 +1,9 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Product, ProductMetaData
-import requests,json
-from django.http import JsonResponse, HttpResponse
-from django.core.paginator import Paginator
-from decimal import Decimal
-from django.db.utils import IntegrityError
-from django.db import transaction
-import os
+from celery import shared_task
+from products.models import Product, ProductMetaData
+import requests, json
+from django.db import transaction, IntegrityError
+from products.sync import build_product_data
+
 
 def load_credentials(filename="creds.json"):
     with open(filename, "r") as file:
@@ -19,7 +16,6 @@ WC_CONSUMER_KEY = credentials["WC_CONSUMER_KEY"]
 WC_CONSUMER_SECRET = credentials["WC_CONSUMER_SECRET"]
 BASE_URL = credentials["BASE_URL"]
 PER_PAGE = 100
-
 
 def build_product_data(product, product_type='product', variation=None):
     # Common fields for both product and variation
@@ -82,8 +78,8 @@ def build_product_data(product, product_type='product', variation=None):
     return data, meta_data_list
 
 
-
-def import_new_products(request):
+@shared_task
+def import_new_products_task():
     product_url = BASE_URL + "products"
     params = {
         "consumer_key": WC_CONSUMER_KEY,
@@ -179,135 +175,3 @@ def import_new_products(request):
                     
             print(f"Product Import Progress for Page {page}: {index}/{total_products}")
         print(f"Finished importing products from page {page}/{total_pages}")
-
-
-
-
-def resync_existing_products(request):
-    product_url = BASE_URL + "products"
-    params = {
-        "consumer_key": WC_CONSUMER_KEY,
-        "consumer_secret": WC_CONSUMER_SECRET,
-        "per_page": PER_PAGE,
-    }
-
-    # Fetch the first page to get the total number of pages
-    response = requests.get(product_url, params=params)
-    total_pages = int(response.headers.get('X-WP-TotalPages', 1))
-
-    for page in range(1, total_pages + 1):
-        params['page'] = page
-        response = requests.get(product_url, params=params)
-        all_products = response.json()
-        total_products = len(all_products)
-
-        for index, product in enumerate(all_products, start=1):
-            product_data, meta_data_list = build_product_data(product)
-            
-            # Attempt to create or update the main product data
-            try:
-                with transaction.atomic():
-                    product_instance, created = Product.objects.update_or_create(product_id=product['id'], defaults=product_data)
-                    
-                    # Save meta data for the main product
-                    for meta in meta_data_list:
-                        try:
-                            ProductMetaData.objects.update_or_create(
-                                product=product_instance,
-                                key=meta['key'],
-                                defaults={
-                                    'value': meta['value'],
-                                    'description': meta.get('description', '')
-                                }
-                            )
-                        except Exception as e:
-                            print(f"Error with Meta Key '{meta['key']}' for Product ID {product['id']}: {str(e)}")
-                            print(f"Meta Value: {meta['value']}")  # This line will print the value causing the issue
-                    
-                    if created:
-                        print(f"Imported New Product ID {product['id']}")
-                    else:
-                        print(f"Updated Product ID {product['id']}")
-            except IntegrityError as e:
-                print(f"Integrity Error with Product ID {product['id']}: {str(e)}")
-                continue
-            except Exception as e:
-                print(f"General Error with Product ID {product['id']}: {str(e)}")
-                continue
-
-            # Handle variations if the product type is variable
-            if product['type'] == 'variable':
-                variation_url = BASE_URL + f"products/{product['id']}/variations"
-                variation_params = {
-                    "consumer_key": params["consumer_key"],
-                    "consumer_secret": params["consumer_secret"]
-                }
-                variations_response = requests.get(variation_url, params=variation_params)
-                variations = variations_response.json()
-                
-                for var_index, variation in enumerate(variations, start=1):
-                    variation_data, var_meta_data_list = build_product_data(product, product_type='variation', variation=variation)
-                    
-                    # Attempt to create or update the variation
-                    try:
-                        with transaction.atomic():
-                            variation_instance, var_created = Product.objects.update_or_create(product_id=variation['id'], defaults=variation_data)
-                            
-                            # Save meta data for the variation
-                            for meta in var_meta_data_list:
-                                try:
-                                    ProductMetaData.objects.update_or_create(
-                                        product=variation_instance,
-                                        key=meta['key'],
-                                        defaults={
-                                            'value': meta['value'],
-                                            'description': meta.get('description', '')
-                                        }
-                                    )
-                                except Exception as e:
-                                    print(f"Error with Meta Key '{meta['key']}' for Variation ID {variation['id']} (Product ID {product['id']}): {str(e)}")
-                                    print(f"Meta Value: {meta['value']}")  # This line will print the value causing the issue
-
-                            if var_created:
-                                print(f"Imported New Variation ID {variation['id']} for Product ID {product['id']}")
-                            else:
-                                print(f"Updated Variation ID {variation['id']} for Product ID {product['id']}")
-                    except IntegrityError as e:
-                        print(f"Integrity Error with Variation ID {variation['id']} for Product ID {product['id']}: {str(e)}")
-                        continue
-                    except Exception as e:
-                        print(f"General Error with Variation ID {variation['id']} for Product ID {product['id']}: {str(e)}")
-                        continue
-                    
-                    print(f"Handled Variation {var_index}/{len(variations)} for Product {index}/{total_products}")
-
-            print(f"Product Handling Progress for Page {page}: {index}/{total_products}")
-        print(f"Finished resyncing products from page {page}/{total_pages}")
-
-    print("Resync Completed!")
-
-    
-    
-def get_live_data(product_ids):
-    params = {
-        "consumer_key": WC_CONSUMER_KEY,
-        "consumer_secret": WC_CONSUMER_SECRET,
-        "include": ",".join(map(str, product_ids)),
-    }    
-    
-    product_url = BASE_URL + "products"
-    response = requests.get(product_url, params=params)
-    products_data = response.json()
-    
-    # Collect all the product IDs that are of type 'variable'
-    variable_product_ids = [product['id'] for product in products_data if product.get('type') == 'variable']
-
-    # For each variable product, fetch its variations and merge with the main product data
-    for var_product_id in variable_product_ids:
-        variations_url = f"{product_url}/{var_product_id}/variations"
-        variations_response = requests.get(variations_url, params=params)
-        variations_data = variations_response.json()
-        products_data.extend(variations_data)  # Merge variations data with main products data
-
-    # Convert the list of products (excluding those of type 'variable') into a dictionary with product_id as the key
-    return {product['id']: product for product in products_data if product.get('type') != 'variable'}    

@@ -1,3 +1,9 @@
+console.log("JavaScript file loaded");
+let searchURL = $('#productSearch').data('search-url');
+
+
+
+
 $(document).ready(function() {
     // Toggle visibility of columns based on user preferences
     $(".column-toggle").change(function() {
@@ -117,3 +123,33 @@ $(document).ready(function() {
         return false;
     }
 });
+
+$(document).ready(function() {
+    $('#productSearch').on('keyup', function() {
+        var query = $(this).val();
+        if (query.length > 2) {
+            $.ajax({
+                url: searchURL, // Ensure this is the correct URL.
+                data: {
+                    'query': query
+                },
+                dataType: 'json',
+                success: function(data) {
+                    $('#searchResults').empty(); // Clear previous results.
+                    
+                    if (data.length == 0) {
+                        $('#searchResults').append('<p>No results found.</p>');
+                    } else {
+                        $.each(data, function(index, product) {
+                            $('#searchResults').append('<a href="/product-page/' + product.slug + '">' + product.name + '</a><br>');
+                        });
+                    }
+                }
+            });
+        } else {
+            $('#searchResults').empty(); // Clear the dropdown if the query is too short.
+        }
+    });
+});
+
+

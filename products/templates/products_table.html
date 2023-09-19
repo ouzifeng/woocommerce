@@ -39,6 +39,19 @@
                 </div>
 
                 <div class="row">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <input type="text" id="productSearch" class="form-control"
+                                placeholder="Search for products..." data-search-url="{{ search_products_url }}">
+
+                            <div id="searchResults" style="position: absolute; background-color: white; z-index: 1000;">
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
                     <div class="col-md-2">
                         <h3 class="mb-4">Product List</h3>
                     </div>
@@ -257,7 +270,7 @@
     </footer>
 
     <!-- Optional: Add some JS scripts or libraries -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"

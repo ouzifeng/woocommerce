@@ -32,6 +32,9 @@ urlpatterns = [
     path('product-page/<slug:product_slug>/', product_views.product_page, name='product_page'),
     path('fetch-live-product-data/', product_views.fetch_live_product_data, name='fetch_live_product_data'),
     path('update-products/', product_views.update_products, name='update_products'),
+    path('products/', product_views.product_list_view, name='product_list_view'),
+    path('search-products/', product_views.search_products, name='search_products'),
+
     # Order urls
     path('orders/', order_views.display_orders, name='display_orders'),
     path('import_orders/', order_views.import_orders_view, name='import_orders'),

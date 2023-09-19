@@ -145,4 +145,12 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': os.environ.get('SEARCHBOX_URL') or 'localhost:9200'
+    },
+}
 
+
+# Celery configurations
+CELERY_BROKER_URL = 'amqps://lperevgv:EccA7-3ofZdpRL40MVAAvFmTGsrw4OFQ@stingray.rmq.cloudamqp.com/lperevgv'
