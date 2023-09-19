@@ -153,7 +153,7 @@ ELASTICSEARCH_DSL = {
 
 
 # Assuming creds.json is in the same directory as settings.py
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 creds_path = os.path.join(BASE_DIR, 'creds.json')
 
 with open(creds_path, 'r') as file:
