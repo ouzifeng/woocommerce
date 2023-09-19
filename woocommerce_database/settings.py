@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-import os
+import os, json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -152,5 +152,13 @@ ELASTICSEARCH_DSL = {
 }
 
 
+# Assuming creds.json is in the same directory as settings.py
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+creds_path = os.path.join(BASE_DIR, 'creds.json')
+
+with open(creds_path, 'r') as file:
+    creds = json.load(file)
+
+
 # Celery configurations
-CELERY_BROKER_URL = 'amqps://lperevgv:EccA7-3ofZdpRL40MVAAvFmTGsrw4OFQ@stingray.rmq.cloudamqp.com/lperevgv'
+CELERY_BROKER_URL = creds["REDIS_URL"]

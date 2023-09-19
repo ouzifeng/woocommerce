@@ -12,6 +12,79 @@ from django.db.models import Q
 from products.tasks import import_new_products_task
 
 
+def load_credentials(filename="creds.json"):
+    with open(filename, "r") as file:
+        data = json.load(file)
+    return data
+
+credentials = load_credentials()
+
+WC_CONSUMER_KEY = credentials["WC_CONSUMER_KEY"]
+WC_CONSUMER_SECRET = credentials["WC_CONSUMER_SECRET"]
+BASE_URL = credentials["BASE_URL"]
+PER_PAGE = 100
+
+def build_product_data(product, product_type='product', variation=None):
+    # Common fields for both product and variation
+    data = {
+        'product_id': product['id'],
+        'name': product.get('name', ''),
+        'permalink': product.get('permalink', ''),
+        'type': product.get('type', ''),
+        'status': product.get('status', ''),
+        'description': product.get('description', ''),
+        'short_description': product.get('short_description', ''),
+        'sku': product.get('sku', ''),
+        'price': product.get('price', '0.0') or '0.0',
+        'regular_price': product.get('regular_price', '0.0') or '0.0',
+        'sale_price': product.get('sale_price', '0.0') or '0.0',
+        'total_sales': product.get('total_sales', 0),
+        'stock_quantity': product.get('stock_quantity', 0),
+        'stock_status': product.get('stock_status', ''),
+        'weight': product.get('weight', ''),
+        'shipping_class': product.get('shipping_class', ''),
+        'parent_id': product.get('parent_id', None),
+        'categories': ",".join([cat['name'] for cat in product.get('categories', [])]),
+        'images': ','.join([img['src'] for img in product.get('images', [])]),
+        'attributes': str(product.get('attributes', [])),
+        'variations': str(product.get('variations', []))
+    }
+
+    # Extract meta data
+    meta_data_list = product.get('meta_data', [])
+
+    if product_type == 'variation' and variation:
+        slug_base = product['slug']
+        variation_slug = f"{slug_base}-{variation['id']}"
+        data.update({
+            'slug': variation_slug
+        })
+        attributes = ", ".join([f"{attr['name']}:{attr['option']}" for attr in variation.get('attributes', [])])
+        variation_name = f"{product['name']} ({attributes})" if attributes else product['name']
+        data.update({
+            'product_id': variation['id'],
+            'name': variation_name,
+            'type': 'variation',
+            'status': variation.get('status', ''),
+            'sku': variation.get('sku', ''),
+            'price': variation.get('price', '0.0') or '0.0',
+            'regular_price': variation.get('regular_price', '0.0') or '0.0',
+            'sale_price': variation.get('sale_price', '0.0') or '0.0',
+            'stock_quantity': variation.get('stock_quantity', 0),
+            'stock_status': variation.get('stock_status', ''),
+            'weight': variation.get('weight', ''),
+            'shipping_class': variation.get('shipping_class', ''),
+            'images': variation['image']['src'] if variation.get('image', None) else '',
+            'attributes': str(variation.get('attributes', [])),
+            'parent_id': product['id']
+        })
+
+        # Add variation's meta data to the list
+        meta_data_list += variation.get('meta_data', [])
+
+    return data, meta_data_list
+
+
 def display_products(request):
     all_products = Product.objects.all().order_by('name', 'product_id')
     paginator = Paginator(all_products, 10)  # Show 10 products per page
@@ -38,17 +111,6 @@ def resync_products_view(request):
     resync_existing_products(request)
     print(request, "Products resynced successfully!")
     return redirect('display_products')
-
-
-#def import_products_view(request):
-#    import_new_products_task.delay()
-#    print("Products imported successfully!")
-#    return redirect('display_products')
-
-#def resync_products_view(request):
-#    resync_existing_products_task.delay()
-#    print(request, "Products resynced successfully!")
-#    return redirect('display_products')
 
 def get_progress(request):
     progress = request.session.get('progress', "Starting import...")

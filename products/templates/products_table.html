@@ -105,8 +105,15 @@
                                 </td>
 
 
-                                <td class="col-name"><a href="{% url 'product_page' product_slug=product.slug %}">
-                                        {{ product.name|truncatechars:30 }}</a></td>
+                                <td class="col-name">
+                                    {% if product.slug %}
+                                    <a href="{% url 'product_page' product_slug=product.slug %}">
+                                        {{ product.name|truncatechars:30 }}</a>
+                                    {% else %}
+                                    {{ product.name|truncatechars:30 }}
+                                    {% endif %}
+                                </td>
+
 
                                 <td class="col-sku">{{ product.sku }}</td>
                                 <td class="col-regular_price>" data-product-id="{{ product.product_id }}"

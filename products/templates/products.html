@@ -15,6 +15,7 @@
 
     {% load static %}
     {% load custom_filters %}
+    {% csrf_token %}
     <link rel="stylesheet" href="{% static 'style.css' %}">
     <title>{{ product.name }}</title>
 </head>
